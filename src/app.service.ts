@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { readFileSync } from 'fs';
-import path, { join } from 'path';
+import { join } from 'path';
 
 @Injectable()
 export class AppService {
