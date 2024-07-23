@@ -20,7 +20,7 @@ export class AppService {
       return JSON.parse(content);
     } catch (error) {
       // Log the error
-      Logger.log(error);
+      Logger.log(error, AppService.name);
 
       // return an empth object
       return {};
