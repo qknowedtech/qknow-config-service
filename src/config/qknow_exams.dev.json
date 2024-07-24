@@ -1,4 +1,6 @@
 {
   "env": "dev",
-  "baseUrl": "https://qknow-exams-gateway-czp9f0ks.uc.gateway.dev"
+  "baseUrl": "https://qknow-exams-gateway-czp9f0ks.uc.gateway.dev",
+  "serviceAccountPassword": "MTcyMTgwNjc1MDEzMzcwNw==",
+  "serviceAccountUsername": "com.qknow.exams_web"
 }
