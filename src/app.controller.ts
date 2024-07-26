@@ -20,3 +20,4 @@ export class AppController {
     return this.appService.getConfiguration(applicationName, env);
   }
 }
+
