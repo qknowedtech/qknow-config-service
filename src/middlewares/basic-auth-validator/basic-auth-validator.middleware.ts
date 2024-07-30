@@ -1,68 +1,55 @@
 import { HttpService } from '@nestjs/axios';
 import {
   Injectable,
+  Logger,
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import { Request, Response, NextFunction } from 'express';
-
+import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class BasicAuthValidatorMiddleware implements NestMiddleware {
-
-  constructor(private http: HttpService) { }
-
+  constructor(private http: HttpService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    const response = await this.verifyBasicAuth(
+      this.getAuthorizationToken(req),
+    );
 
-    const authorization = req.get('authorization');
-
-
-    if (!authorization || !authorization.startsWith('Basic ')) {
-
-      throw new UnauthorizedException('Missing or invalid authorization header');
-    }
-
-    const response = await this.verifyBasicAuth(authorization);
-
-    if (response.data.status === 'success') {
-
+    if (response.valid) {
       next();
     } else {
-
       throw new UnauthorizedException('Invalid authorization token');
     }
   }
 
+  private getAuthorizationToken(req: Request) {
+    return `Basic ${req.get('authorization')}`;
+  }
+
   private async verifyBasicAuth(authorization: string) {
     try {
-
-      const response: AxiosResponse = await new Promise((resolve, reject) =>
-        this.http
-          .get<{ status: string }>(
-            'https://qknow-exams-gateway-czp9f0ks.uc.gateway.dev/auth/tokens/basic/verify',
-            {
+      const response: AxiosResponse<{ status: string }> = await new Promise(
+        (resolve, reject) =>
+          this.http
+            .get<{
+              status: string;
+            }>(`${process.env.AUTHORIZATION_SERVER}/tokens/basic/verify`, {
               headers: { Authorization: authorization },
-              timeout: 200000,
-            },
-          )
-          .subscribe({
-            next: (response) => {
-
-              resolve(response);
-            },
-            error: (error) => {
-
-              reject(error);
-            },
-          }),
+            })
+            .subscribe({
+              next: (response) => resolve(response),
+              error: (error) => reject(error),
+            }),
       );
 
-      return response;
+      return {
+        valid: response.data.status === 'success',
+      };
     } catch (error) {
-
-      throw new UnauthorizedException('Error during authorization verification');
+      Logger.log(error, BasicAuthValidatorMiddleware.name);
+      return { valid: false };
     }
   }
 }
