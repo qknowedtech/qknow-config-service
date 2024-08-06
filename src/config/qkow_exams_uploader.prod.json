@@ -2,5 +2,5 @@
     "env": "prod",
     "baseUrl": "https://qknow-exams-gateway-czp9f0ks.uc.gateway.dev",
     "serviceAccountPassword": "MTcyMjU5MDc5NDQ3MTI3OA==",
-    "serviceAccountUsername": "com.qknow.exmas_uploader"
+    "serviceAccountUsername": "com.qknow.exams_uploader"
 }
